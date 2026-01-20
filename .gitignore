@@ -1,0 +1,28 @@
+# Zig build artifacts
+zig-cache/
+zig-out/
+.zig-cache/
+
+# Build outputs
+*.o
+*.lib
+*.a
+*.so
+*.dll
+*.exe
+*.elf
+*.bin
+
+# Documentation (regenerate as needed)
+docs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

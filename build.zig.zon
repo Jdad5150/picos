@@ -1,0 +1,12 @@
+.{
+    .name = .microzig_test,
+    .version = "0.0.1",
+    .minimum_zig_version = "0.15.2",
+    .paths = .{""},
+    .fingerprint = 0x3e370354721c556a,
+    .dependencies = .{
+        .microzig = .{
+            .path = "../ziglibraries/microzig",
+        },
+    },
+}
