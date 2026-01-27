@@ -15,7 +15,7 @@ pub fn build(b: *std.Build) void {
         .optimize = .ReleaseSmall,
         .root_source_file = b.path("src/main.zig"),
     });
-    
-    mb.install_firmware(firmware, .{ }); // .uf2
+
+    mb.install_firmware(firmware, .{}); // .uf2
     mb.install_firmware(firmware, .{ .format = .elf }); // .elf
 }

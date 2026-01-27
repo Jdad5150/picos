@@ -13,31 +13,28 @@ const BETWEEN_PARTS_MS = 700;
 
 const pin_config = rp2xxx.pins.GlobalConfiguration{
     .GPIO25 = .{ .name = "led", .direction = .out }, // LED to blink
-    .GPIO0 = .{ .name = "uart_tx", .function = .UART0_TX },  // Transmitter pin
-    .GPIO1 = .{ .name = "uart_rx", .function = .UART0_RX },  // Receiver pin
+    .GPIO0 = .{ .name = "uart_tx", .function = .UART0_TX }, // Transmitter pin
+    .GPIO1 = .{ .name = "uart_rx", .function = .UART0_RX }, // Receiver pin
 };
-
-
 
 pub fn main() !void {
     const pins = pin_config.apply(); // Apply pin configuration
-    
+
     var uart0 = uart.instance.num(0); // Get UART0 instance
     uart0.apply(.{
-        .baud_rate = 115200,  // Baud rate - must match on both sender and receiver
+        .baud_rate = 115200, // Baud rate - must match on both sender and receiver
         .clock_config = rp2xxx.clock_config,
     });
 
-    var buf: [32]u8 = undefined;  // Create command buffer
+    var buf: [32]u8 = undefined; // Create command buffer
     var idx: usize = 0;
 
     while (true) {
-        if (uart0.can_read()) { // Check if data is available in UART buffer
-            const byte = uart0.read(); // Read one byte
-            
+        if (uart0.read_word() catch null) |byte| { // Read one byte if available
+
             if (byte == '\n' or byte == '\r') { // Check if end of command
                 if (idx > 0) {
-                    handle_command(buf[0..idx], &pins); 
+                    handle_command(buf[0..idx], &pins);
                     idx = 0;
                 }
             } else if (idx < buf.len) {
@@ -58,13 +55,13 @@ fn handle_command(cmd: []const u8, pins: anytype) void {
         pins.led.toggle();
     } else {
         const value = std.fmt.parseFloat(f32, cmd) catch return;
-        var coord = CoordinateValue{ .whole_num = 0, .decimals = undefined };
+        var coord = CoordinateValue.CoordinateValue{ .whole_num = 0, .decimals = undefined };
         coord.parse_raw_coordinate(value, 3);
         visualize_coordinate(coord, pins);
     }
 }
 
-fn visualize_coordinate(coord: CoordinateValue, pins: anytype) void {
+fn visualize_coordinate(coord: CoordinateValue.CoordinateValue, pins: anytype) void {
     // Blink whole number with long blinks
     var i: usize = 0;
     while (i < @abs(coord.whole_num)) : (i += 1) {
@@ -73,9 +70,9 @@ fn visualize_coordinate(coord: CoordinateValue, pins: anytype) void {
         pins.led.put(0);
         time.sleep_ms(BETWEEN_DIGITS_MS);
     }
-    
+
     time.sleep_ms(BETWEEN_PARTS_MS);
-    
+
     // Blink decimals with short blinks
     for (coord.decimals) |digit| {
         var j: usize = 0;
@@ -88,5 +85,3 @@ fn visualize_coordinate(coord: CoordinateValue, pins: anytype) void {
         time.sleep_ms(BETWEEN_PARTS_MS);
     }
 }
-
-

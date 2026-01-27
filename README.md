@@ -22,13 +22,43 @@ This project implements firmware for multiple Raspberry Pi Pico microcontrollers
 
 ## Building
 
-Requires [Zig](https://ziglang.org/) and [MicroZig](https://github.com/ZigEmbeddedGroup/microzig).
+Requires [Zig](https://ziglang.org/) 0.15.2+ and [MicroZig](https://github.com/ZigEmbeddedGroup/microzig).
+
+### MicroZig Setup
+
+This project uses a local MicroZig dependency. You need to:
+
+1. Clone MicroZig to a local directory:
+   ```bash
+   git clone https://github.com/ZigEmbeddedGroup/microzig.git ~/Development/libraries/microzig
+   ```
+
+2. Update the path in `build.zig.zon` if your MicroZig is in a different location:
+   ```zig
+   .dependencies = .{
+       .microzig = .{
+           .path = "../../../libraries/microzig",  // Adjust relative path as needed
+       },
+   },
+   ```
+   
+   **Important**: The path must be relative to the `build.zig.zon` file, not absolute.
+
+3. Verify the path is correct:
+   ```bash
+   # From the picos directory, this should succeed:
+   ls ../../../libraries/microzig/build.zig
+   ```
+
+### Build Commands
 
 ```bash
 # Build firmware
 zig build
 
-# Output: zig-out/firmware/pico_controller.uf2
+# Output files:
+# - zig-out/firmware/pico_controller.uf2 (flash this to Pico)
+# - zig-out/firmware/pico_controller.elf (for debugging)
 ```
 
 ## Flashing

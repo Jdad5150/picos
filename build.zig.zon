@@ -6,7 +6,10 @@
     .fingerprint = 0x3e370354721c556a,
     .dependencies = .{
         .microzig = .{
-            .path = "../ziglibraries/microzig",
+            // Path must be relative to this build.zig.zon file
+            // Adjust this path based on where your microzig library is located
+            // Current path: /home/jesselittle/Development/projects/motionz-picos/picos -> /home/jesselittle/Development/libraries/microzig
+            .path = "../../../libraries/microzig",
         },
     },
 }
